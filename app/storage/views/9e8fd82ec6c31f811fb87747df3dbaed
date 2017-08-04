@@ -1,0 +1,46 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: sanjay
+ * Date: 10-Apr-17
+ * Time: 4:06 PM
+ */
+ ?>
+<div class="col-md-3 col-sm-3 col-xs-12 right-les">
+        <div class="right-site-top">
+            <div class="top-trak-list">
+                    <h3>Top 10 Tracks </h3>
+            </div>
+          <?php $i=0; ?>
+            <?php foreach($popularAlbums as $index => $album): ?>
+
+                <div class="col-md-12 rit-t">
+                    <div class="top-item">
+                        <div class="num-1">
+                                <strong><?php echo $index+1; ?></strong>
+                        </div>
+                        <div class="top-item-1 album">
+                            <div class="play-album" data-album="<?php echo $album->slug; ?>" data-album_title="<?php echo $album->title; ?>" data-cover="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" >
+                                <span class="fa fa-play"></span>
+                            </div>
+                    <?php $i++; ?>
+                            <img src="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" alt="<?php echo $album->title; ?>">
+                         </div>
+
+
+
+
+                        <div class="top-item-2">
+                                 <span class="atist-n-q">
+                                          <a class="album-title pjax" title="<?php echo $album->title; ?>" href="<?php echo URL::to('album/'.Custom::slugify($album->title).'-'.$album->slug); ?>"><?php echo $album->title; ?></a>
+                                          <a href="javascript:void(0);" class="top10A" ><?php echo $album->artist->name; ?></a>
+                                          <a href="javascript:void(0)" class="top10A" ><span><?php echo $album->publisher->name; ?></span></a>
+                                 </span>
+                        </div>
+                    </div>
+            </div>
+            <?php endforeach; ?>
+
+
+        </div>
+</div>

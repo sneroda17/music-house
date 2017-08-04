@@ -1,0 +1,35 @@
+<?php $__env->startSection('meta-content'); ?>
+<title><?php echo Lang::get('words.admin_alt').' - '.Lang::get('words.pages'); ?></title>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href="<?php echo URL::to('admin'); ?>"><?php echo Lang::get('words.admin'); ?></a></li>
+            <li class="active"><?php echo Lang::get('words.languages'); ?> (<b><?php echo DB::table("languages")->count(); ?></b>)</li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <?php foreach($languages as $language): ?>
+        <form class="lang-form" method="POST" action="<?php echo URL::to('admin/language/'.$language->id); ?>" accept-charset="UTF-8">
+        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+        <div class="col-md-3 col-sm-4">
+            <div class="form-group input-group">
+                <input type="text" class="form-control" name="name" value="<?php echo $language->name; ?>">
+                <div class="input-group-btn">
+                    <button  class="btn btn-primary"><?php echo Lang::get('words.save'); ?></button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <?php endforeach; ?>
+</div>
+<div class="row">
+    <div class="col-xs-12 text-center">
+        <?php echo $languages->links(); ?>
+
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

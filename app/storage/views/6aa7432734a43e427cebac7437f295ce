@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+	<?php echo $__env->yieldContent('meta-content'); ?>
+	<meta name="rootURL" content="<?php echo URL::to('/'); ?>">
+	<meta name="_token" content="<?php echo csrf_token(); ?>">
+	<meta name="auth_download" content="<?php echo $settings->auth_download; ?>">
+	<meta name="is_login" content="<?php if(Auth::guest()): ?> 0 <?php else: ?> 1 <?php endif; ?>">
+	<meta name="youtube_key" content="<?php echo $settings->youtube_key; ?>">
+
+	<link rel="stylesheet" href="<?php echo URL::asset('assets/css/bootstrap.css'); ?>" />
+	<link rel="stylesheet" href="<?php echo URL::asset('assets/css/font-awesome.css'); ?>" />
+	<link rel="stylesheet" href="<?php echo URL::asset('assets/css/jquery.bxslider.css'); ?>" />
+	<link rel="stylesheet" href="<?php echo URL::asset('assets/css/bar-ui.css'); ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo URL::to('assets/css/bootstrap-datepicker3.css'); ?>">
+    <link rel="stylesheet" href="<?php echo URL::asset('assets/css/style.css?v=2'); ?>" />
+
+    <link rel="icon" href="<?php echo URL::asset('assets/images/favicon.ico'); ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo URL::asset('assets/images/favicon.ico'); ?>" type="image/x-icon">
+	<!--script-attachment-index start-->
+
+
+	<!--script-attachment-index end-->
+	<!--script-attachment-index start-->
+	<link rel="stylesheet" href="<?php echo URL::asset('assets/css/style2.css?v=2'); ?>" />
+
+	<!--script-attachment-index end-->
+
+
+
+
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/jquery-1.11.0.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/bootstrap.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/jscroll.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/jquery.form.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/jquery.pjax.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/bootstrap-tagsinput.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/typeahead.bundle.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/nprogress.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/jquery.bxslider.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/jquery.noty.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/soundmanager2.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo URL::asset('assets/js/bar-ui.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo URL::to('assets/js/bootstrap-datepicker.js'); ?>"></script>
+
+
+
+	<script type="text/javascript" src="<?php echo URL::asset('assets/js/dropdown.js?v=2'); ?>"></script>
+
+
+
+    <script type="text/javascript">
+
+      $(document).ready(function(){
+        rootURL = "<?php echo URL::to('/'); ?>";
+      });
+
+    </script>
+
+	<!--dropdown_filter start-->
+	<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("myDropdown");
+    a = div.getElementsByTagName("a");
+    for (i = 0; i < a.length; i++) {
+        if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+        } else {
+            a[i].style.display = "none";
+        }
+    }
+}
+</script>
+<!--dropdown_filter end-->
+
+
+    <style type="text/css">
+    	.side-nav>li.active>a, .navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+		    border-left-color: <?php echo $settings->theme_color; ?>;
+		}
+		.fav-link.active {
+		  border-bottom: 3px solid <?php echo $settings->theme_color; ?>;
+		}
+		.create-playlist, .create-playlist:hover, .create-playlist:focus, .album-like.active, .track-like.active {
+		    color: <?php echo $settings->theme_color; ?>;
+		}
+		.navbar-inverse .navbar-toggle .icon-bar, #nprogress .bar {
+		    background-color: <?php echo $settings->theme_color; ?>;
+		}
+		#nprogress .peg {
+		  box-shadow: 0 0 10px <?php echo $settings->theme_color; ?>, 0 0 5px<?php echo $settings->theme_color; ?>;
+		}
+		#nprogress .spinner-icon {
+		  border-top-color: <?php echo $settings->theme_color; ?>;
+		  border-left-color: <?php echo $settings->theme_color; ?>;
+		}
+    </style>
+</head>
+<body>
+<div id="graphPixels"><div></div></div>
+<nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+	<button data-direction="left" data-target="#slidemenu" class="navbar-toggle" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+	</button>
+
+	<!--<div id="waveforms"></div>-->
+	<div class="col-sm-12">
+		<div class="sm2-bar-ui full-width pull-left">
+	        <div class="bd sm2-main-controls">
+	        	<div class="sm2-inline-element hidden">
+	                <?php /*<a class="navbar-brand logo hidden-xs pjax" title="<?php echo $settings->website_name; ?>" >
+	                    */ ?><?php /*<img  src="<?php echo URL::asset('assets/images/logo.png'); ?>"/>*/ ?><?php /*
+	                </a>*/ ?>
+	                <img  id="player_cover" src="http://localhost:8080/mp3/public/uploads/albums/7bc0e1f0d4888e62b4ee611afd749503/thumb/wFXq13Oyxf.jpg"/>
+	            </div>
+	            <!--<div class="songs-info hidden">
+                    <h1 class="track-title"></h1>
+                     <span class="album-title"></span>
+                </div>-->
+	        	<div class="sm2-inline-element sm2-button-element">
+	                <div class="sm2-button-bd">
+	                	<a class="sm2-inline-button previous" title="Previous" href="#prev">&lt; previous</a>
+	                </div>
+	            </div>
+
+	            <div class="sm2-inline-element sm2-button-element">
+	                <div class="sm2-button-bd">
+	                    <a id="play-pause" class="sm2-inline-button play-pause" href="#play">Play / pause</a>
+	                </div>
+	            </div>
+
+	            <div class="sm2-inline-element sm2-button-element">
+	                <div class="sm2-button-bd">
+	                    <a id="play-next" class="sm2-inline-button next" title="Next" href="#next">&gt; next</a>
+	                </div>
+	            </div>
+
+
+
+	            <div class="sm2-inline-element sm2-inline-status">
+
+	                <div class="sm2-progress">
+	                    <div class="sm2-row">
+	                        <div class="sm2-inline-time">0:00</div>
+                                <div class="sm2-progress-bd">
+
+
+                                   <div class="sm2-progress-track">
+                                    <!--<div id="waveform"></div> -->
+                                       <img class="waveformpng" src="">
+                                    <div class="sm2-progress-bar"></div>
+
+                                        <div class="sm2-progress-ball hidden" >
+
+                                        <?php /*<img class="track-img" src="<?php echo URL::to('assets/img/bootstrap-colorpicker/line.png'); ?>">*/ ?>
+
+                                        <span class="line-btn-track"></span>
+
+                                            <div class="icon-overlay" style="top:20px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+	                        <div class="sm2-inline-duration">0:00</div>
+	                    </div>
+	                </div>
+
+	            </div>
+
+	            <div class="sm2-inline-element sm2-button-element sm2-volume">
+	                <div class="sm2-button-bd">
+	                    <span class="sm2-inline-button sm2-volume-control volume-shade"></span>
+	                    <a class="sm2-inline-button sm2-volume-control" href="#volume">volume</a>
+	                </div>
+	            </div>
+
+	            <div class="sm2-inline-element sm2-button-element sm2-menu">
+	                <div class="sm2-button-bd">
+	                    <a class="sm2-inline-button menu" href="#menu">menu</a>
+	                </div>
+	            </div>
+
+	        </div>
+
+	        <div class="bd sm2-playlist-drawer sm2-element" style="height: 0px;">
+
+	            <div class="sm2-inline-texture">
+	                <div class="sm2-box-shadow"></div>
+	            </div>
+
+	            <!-- playlist content is mirrored here -->
+	            <div class="sm2-playlist-wrapper">
+	                <ul class="sm2-playlist-bd">
+	                    <li></li>
+	                </ul>
+	            </div>
+
+	        </div>
+	    </div>
+	</div>
+
+</nav>
+
+<header>
+<div class="container" >
+<div class="header-top">
+<div class="col-md-3 col-sm-3 col-xs-6">
+  		<div class="category">
+				<div class="dropdown">
+	<button onclick="myFunction()" class="dropbtn">Genres <span><img src="<?php echo URL::asset('assets/images/menu.png'); ?>"/></span></button>
+  	<div id="myDropdown" class="dropdown-content">
+  	<?php foreach($genres as $i => $genre): ?>
+      <a href="<?php echo URL::to('category/'.$genre->slug); ?>" class="pjax <?php if(Request::is($genre->name)): ?> active <?php endif; ?>"><?php echo $genre->name; ?></a>
+      <?php endforeach; ?>
+
+  </div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6 col-xs-6">
+  		<div class="search-box-filter">
+				<div class="sr-f-d">
+						<div class="search">
+						<form  role="search" method="get" action="<?php echo URL::to('/'); ?>">
+				<input type="text" name="q" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+				<a href="javascript:void(0);" onclick="document.querySelector('form').submit()" id="searc-btn"><img src="<?php echo URL::asset('assets/images/search.png'); ?>"/></a>
+				</form>
+</div>
+</div>
+</div>
+</div>
+<!--col-md-8-->
+
+<div class="col-md-3 col-sm-3 col-xs-12">
+  		<div class="accout-info">
+     <!--login satrt-->
+
+     <!-- Large modal -->
+<?php if(!Auth::check()){ ?>
+
+			<!--<button class="btn btn-primary"  data-toggle="modal" data-target="#signup" href="#signup">
+    		Log In / Sign Up</button>-->
+    		
+
+    		<!--login end-->
+<?php }else{
+
+			// Get the username.
+   			$username = Auth::user()->username;
+   			// Get the Expiration date.
+   			if(Auth::user()->admin!=1){
+   			    if(Auth::user()->subscriber){
+                    $expiration_date = Auth::user()->subscriber->time_limit;
+                    //Get Downloads Left.
+                    $download_left = Auth::user()->subscriber->download_limit - Auth::user()->subscriber->downloaded_data;
+
+                    echo ucwords($username).'<br> Expiration Date - '.$expiration_date.' | '.$download_left.' Mb';
+   			    }else{
+                         
+   			    }
+
+   	 		}
+   	 		?>
+   	 		<div><a href="<?php echo url('logout'); ?>">Logout</a></div>
+   	 	<?php
+   		}
+?>
+
+</div>   <!--accout-info-->
+</div>
+<!--col-md-2-->
+</div>
+<!--header-top-->
+</div>
+<!--container-->
+
+
+</header>
+  <!--/*/*header*/*/-->
+
+<div id="wrapper" class="hidden">
+<div id="page-wrapper">
+<div class="full-contain">
+<?php echo $__env->yieldContent('content'); ?>
+</div>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/wavesurfer.min.js"></script>
+ <script type="text/javascript" src="<?php echo URL::asset('assets/js/app.js?v=2'); ?>"></script>
+
+
+
+<?php echo $__env->make('modals.modal-form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<script type="text/javascript">
+ 	<?php if(Session::get('message') != '' && Session::get('status') != ''): ?>
+        var n = noty({
+                text        : '<?php echo Session::get("message"); ?>',
+                type        : '<?php echo Session::get("status"); ?>',
+                dismissQueue: true,
+                layout      : 'bottomRight',
+                closeWith   : ['click'],
+                theme       : 'relax',
+                maxVisible  : 10
+            });
+        <?php Session::forget('status'); Session::forget('message'); ?>
+    <?php endif; ?>
+</script>
+
+
+<?php if(isset($settings->analytics)): ?>
+  	<?php echo htmlspecialchars_decode($settings->analytics); ?>
+
+<?php endif; ?>
+</body>
+</html>

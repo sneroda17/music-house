@@ -1,0 +1,21 @@
+<div class="modal-dialog">
+<div class="modal-content">
+    <form role="form" method="post" action="<?php echo action('RemindersController@postRemind'); ?>">
+    	<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+		<div class="modal-header">
+			<?php if(!Request::is('forgotpassword')): ?><!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>--><?php endif; ?>
+			<h4 class="modal-title" id="signupLabel"><?php echo Lang::get('words.reset-password'); ?></h4>
+		</div>
+		<div class="modal-body">
+			<h4><small><?php echo Lang::get('words.reset-password-email'); ?></small></h4>
+			<div class="form-group form-addon">
+				<span class="fa fa-envelope"></span>
+				<input type="email" name="email" class="form-control form-addon" id="email" placeholder="<?php echo Lang::get('words.email-address'); ?>">
+			</div>
+    	</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-info pull-left"><?php echo Lang::get('words.recover'); ?></button>
+		</div>
+	</form>
+</div>
+</div>

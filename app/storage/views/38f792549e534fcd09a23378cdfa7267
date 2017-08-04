@@ -1,0 +1,19 @@
+<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="loginLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<?php echo $__env->make('modals.login-form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>
+
+<div class="modal fade" id="signup" tabindex="-1" role="dialog" aria-labelledby="signUpLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<?php echo $__env->make('modals.signup-form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>
+
+<div class="modal fade" id="emailsignup" tabindex="-1" role="dialog" aria-labelledby="emailSignUpLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<?php echo $__env->make('modals.email-signup-form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>
+
+<div class="modal fade" id="forgotpassword" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordUpLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<?php echo $__env->make('password.remind', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>
+
+<div class="modal fade" id="adminsignup" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordUpLabel" aria-hidden="true" data-keyboard="false">
+	<?php echo $__env->make('modals.admin-signup-form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>

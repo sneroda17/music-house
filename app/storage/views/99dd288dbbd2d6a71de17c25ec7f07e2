@@ -1,0 +1,58 @@
+<?php $__env->startSection('meta-content'); ?>
+	<meta name="twitter:card" value="photo"/>
+	<meta name="twitter:site" value="<?php echo '@'.$settings->twitter_page_id; ?>"/>
+	<meta name="twitter:image" value="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+	<meta property="og:type" content="blog"/>
+	<meta property="og:site_name" content="<?php echo $settings->website_name; ?>"/>
+	<meta property="og:url" content="<?php echo Request::url(); ?>"/>
+	<meta property="og:title" content="<?php echo $settings->website_name; ?> - <?php echo Lang::get('words.my-favorite-albums'); ?>"/>
+	<meta property="og:image" content="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+	<meta property="og:description" content="<?php echo $settings->website_name; ?> - <?php echo Lang::get('words.my-favorite-albums'); ?>"/>
+	<title><?php echo $settings->website_name; ?> - <?php echo Lang::get('words.my-favorite-albums'); ?></title>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+<?php
+	$al_counts = DB::table('tracks')->whereIn('album_id', $albumLikes->lists('album_id'))->select(DB::raw('album_id, count(id) AS count'))->groupBy('album_id')->get();
+	$al_array = array();
+	foreach($al_counts as $al_count) {
+		$al_array[$al_count->album_id] = $al_count->count;
+	}
+?>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="hidden-xs text-center" style="width:728px;margin:15px auto 0">
+			<iframe src="<?php echo URL::to('ads/banner'); ?>" width='728' height="90" frameborder='0' border='0' marginwidth='0' marginheight='0' scrolling='no'></iframe>
+		</div>
+		<h2><span class="text-muted"><?php echo Lang::get('words.favorite'); ?></span> <a class="fav-link pjax" href="<?php echo URL::to('favorites'); ?>" title="<?php echo Lang::get('words.tracks'); ?>"><?php echo Lang::get('words.tracks'); ?></a> <a class="fav-link active pjax" href="<?php echo URL::to('favorites/albums'); ?>" title="<?php echo Lang::get('words.albums'); ?>"><?php echo Lang::get('words.albums'); ?></a></h2>
+		<br />
+		<div class="scroll-container">
+			<?php $__empty_1 = true; foreach($albumLikes as $albumLike): $__empty_1 = false; ?>
+				<?php
+					$album = $albumLike->album;
+					$album_likes = isset($al_array[$album->id]) ? $al_array[$album->id] : 0;
+				?>
+				<div class="col-lg-2 col-md-3 col-sm-4 col-xs-4 scroll-items" style="padding:0; margin-bottom:15px">
+			       	<div class="album">
+		            	<img src="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" alt="<?php echo $album->title; ?>" class="img-responsive">
+		            	<div class="play-album" data-album="<?php echo $album->slug; ?>">
+		            		<span class="fa fa-play"></span>
+		            	</div>
+		            	<div class="album-info">
+		            		<a class="album-title pjax" title="<?php echo $album->title; ?>" href="<?php echo URL::to('album/'.Custom::slugify($album->title).'-'.$album->slug); ?>"><?php echo $album->title; ?></a>
+		            		<span class="album-artist"><?php echo Lang::get('words.tracks'); ?> (<?php echo $album_likes; ?>)</span>
+		            		<div class="clearfix"></div>
+		            	</div>
+		           	</div>
+			    </div>
+			<?php endforeach; if ($__empty_1): ?>
+				<div class="alert alert-danger"><i class="fa fa-meh-o"></i> Sorry, No Albums found</div>
+			<?php endif; ?>
+			<div class="clearfix"></div>
+		</div>
+		<?php echo $albumLikes->links('pagination::simple'); ?>
+
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

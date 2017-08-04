@@ -1,0 +1,231 @@
+<?php $__env->startSection('meta-content'); ?>
+	<?php $albumImg =  URL::to('uploads/albums/'.$album->location.'/'.$album->slug.'.jpg'); ?>
+	<meta name="twitter:card" value="photo"/>
+	<meta name="twitter:site" value="<?php echo '@'.$settings->twitter_page_id; ?>"/>
+	<meta name="twitter:image" value="<?php echo $albumImg; ?>"/>
+	<meta property="og:type" content="article" />
+	<meta property="og:site_name" content="<?php echo $settings->website_name; ?>"/>
+	<meta property="og:url" content="<?php echo Request::url(); ?>"/>
+	<meta property="og:title" content="<?php echo Lang::get('words.download'); ?> <?php echo $album->title; ?> <?php echo Lang::get('words.tracks'); ?>"/>
+	<meta property="og:image" content="<?php echo $albumImg; ?>"/>
+	<meta property="og:description" content="<?php echo Lang::get('words.download'); ?> <?php echo $album->title; ?> <?php echo Lang::get('words.tracks'); ?>"/>
+	<title><?php echo Lang::get('words.download'); ?> <?php echo $album->title; ?> <?php echo Lang::get('words.tracks'); ?></title>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+<?php
+	$tracks = $album->tracks()->with('artist', 'is_favorite')->paginate(20);
+	$tl_counts = $album->getPopularity($tracks->lists('id'))->get();
+	$tl_array = array();
+	foreach($tl_counts as $tl_count) {
+		$tl_array[$tl_count->track_id] = $tl_count->count;
+	}
+	$downloadLink = '';
+	if($settings->downloadable) {
+		$downloadLink = '<button title="'.Lang::get("words.download").'" class="btn btn-transparent btn-circle track-download"><span class="fa fa-download"></span></button>';
+	}
+?>
+
+<div class="release_full-page">
+    <div class="container">
+        <div class="rels-form">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <div class="img-music-rel">
+                    <img src="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" />
+                    </div>  <!--img-music-rel-->
+                </div>
+                <div class="col-md-9">
+                    <div div class="title-releplay-albums">
+                        <div class="title-name-reles">
+                            <p>Release:<span> <?php echo $album->title; ?>	</span> </p>
+                            <p><?php echo Lang::get('words.artist'); ?> :<span class="tt-artist" >
+
+                            <?php
+
+                                $artistList = [];
+                                foreach($tracks as $track){
+                                     $artistList[] = $track->artist->name;
+                                }
+                                $list = array_unique($artistList);
+                                echo implode(",",$list);
+
+//dd($list);
+                            ?>
+                            </span> </p>
+                            <p>Genre :<span>
+                                <?php for($i=0; $i<count($album->categories); $i++): ?>
+
+                                    <?php echo $album->categories[$i]->name; ?>,
+
+                                <?php endfor; ?>
+                            </span> </p>
+                            <p>Label :<span><?php echo $album->publisher->name; ?></span> </p>
+                            <p>Added On :<span> <?php echo $album->release_date; ?> 	</span> </p>
+                            <div class="button-play-relaease" id="bt-play" >
+                            <a href="javascript:void(0)" class="play-album-release"  data-album="<?php echo $album->slug; ?>" data-cover="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" data-album_title="<?php echo $album->title; ?>" data-waves="<?php echo URL::to('uploads/audios/'.$album->location.'/wavefiles/'.$track->slug.'.png'); ?>">
+                                 <img src="<?php echo URL::to('assets/images/play_button.png'); ?>" />
+                            </a>
+
+                            </div>
+
+                        </div>
+                    </div>  <!--title-reles-->
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <table class="table album-tracks" style="margin-top: 20px;">
+            			<thead>
+            				<tr>
+            					<th><?php echo Lang::get('words.title'); ?></th>
+            					<th class="hidden-480"><?php echo Lang::get('words.duration'); ?></th>
+            					<th class="hidden-480"><?php echo Lang::get('words.size'); ?></th>
+            					<th class="hidden-480"><?php echo Lang::get('words.genre'); ?></th>
+            					<th class="text-center"><?php echo Lang::get('words.actions'); ?></th>
+            				</tr>
+            			</thead>
+            			<tbody class="scroll-container">
+
+            			<?php foreach($tracks as $track): ?>
+            				<?php
+
+
+            					$track_likes = isset($tl_array[$track->id]) ? $tl_array[$track->id] : 1;
+            					$likepercent = Custom::popularity($track_likes);
+            					$likepercent = $likepercent < 10 ? 10 : $likepercent;
+
+            					/*try{
+                                    $getID3 = new getID3;
+                                        $mp3fileInfo = $getID3->analyze((string)('uploads/audios/'.$track->location.'/'.$track->slug.'.mp3'));
+                                        $genre = $mp3fileInfo['id3v2']['comments']['genre'][0];
+                                        //print_r($mp3fileInfo);
+                                    }catch (Exception $ex){
+                                        echo $ex->getMessage();
+                                    }*/
+            				?>
+
+            				<tr class="scroll-items" data-title="<?php echo $track->title; ?>" data-trackid="<?php echo $track->id; ?>" data-artist="<?php echo $track->artist->name; ?>" data-slug="<?php echo $track->slug; ?>" data-track="<?php echo URL::to('uploads/audios/'.$track->location.'/'.$track->slug.'.mp3'); ?>" data-cover="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" data-album_title="<?php echo $album->title; ?>" data-waves="<?php echo URL::to('uploads/audios/'.$album->location.'/wavefiles/'.$track->slug.'.png'); ?>">
+            					<td>
+            						<button class="btn btn-transparent btn-circle pull-left track-play">                                                                                      
+            							<span class="fa fa-play"></span>
+            						</button>
+            						<div class="track-album pull-left">
+            							<!--<a class="tt-title" title="<?php echo Lang::get('words.download').' '.$track->title; ?>" href="<?php echo URL::to('track/'.Custom::slugify($track->title).'-'.$track->slug); ?>" ><?php echo $track->title; ?></a>
+            							<a class="tt-artist" title="<?php echo Lang::get('words.browse-albums', array('title' => $track->artist->name)); ?>" href="<?php echo URL::to('artist/'.$track->artist->slug); ?>"><?php echo $track->artist->name; ?></a> -->
+
+            							<span class="tt-title" title="<?php echo Lang::get('words.download').' '.$track->title; ?>" ><?php echo $track->title; ?></span>
+                                        <span class="tt-artist" title="<?php echo Lang::get('words.browse-albums', array('title' => $track->artist->name)); ?>" ><?php echo $track->artist->name; ?></span>
+            						</div>
+            						<div class="clearfix"></div>
+            					</td>
+            					<td class="hidden-480">
+            						<?php echo Custom::formatMilliseconds($track->duration); ?>
+
+            					</td>
+            					<td class="hidden-480">
+            						<?php echo Custom::formatBytes($track->filesize); ?>
+
+            					</td>
+            					<td class="hidden-480">
+            						<!--<span class="rating-wrap">
+            							<span class="rating-bar" style="width:<?php echo $likepercent; ?>%"></span>
+          						</span>-->
+<?php echo $track->category->name; ?>
+
+            					</td>
+            					<td class="text-center">
+            						<?php echo $downloadLink; ?>
+
+            						<button title="<?php echo Lang::get('words.add-to-playlist'); ?>" class="btn btn-transparent btn-circle" data-toggle="modal" data-target="#track-playlist-modal"><span class="fa fa-plus"></span></button>
+            						<button title="<?php echo Lang::get('words.favorite'); ?>" class="btn btn-transparent btn-circle track-like <?php if($track->is_favorite->count()): ?> active <?php endif; ?>"><span class="fa fa-heart"></span></button>
+            					</td>
+            				</tr>
+            			<?php endforeach; ?>
+            			</tbody>
+            			<?php echo $tracks->links('pagination::simple'); ?>
+
+            		</table>
+            		<?php if($settings->zip_download): ?>
+            		<div class="download-file">
+                            <button class="btn btn-labeled btn-danger album-download" data-album="<?php echo $album->slug; ?>"><span class="btn-label"><i class="fa fa-download"></i></span> <?php echo Lang::get('words.download'); ?></button><?php endif; ?>
+                    </div>
+
+            </div>
+        </div>  <!--rels-form-->
+    </div>
+    <?php if($sameLabelAlbums->count()): ?>
+        <div class="container">
+        <div class="more-label">
+            <div class="row pf-c">
+            <div class="row pf-c">
+                <div class="col-md-9">
+                    <div class="h-b-most">
+                    <h3> More From This Label </h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- Controls -->
+                    <div class="controls pull-right hidden-xs">
+                        <a class="left bt-ar" href="#carousel-example"
+                            data-slide="prev"><img src="<?php echo URL::to('assets/images/arrow-1-left.png'); ?>"></a><a class="right bt-ar" href="#carousel-example"
+                                data-slide="next"><img src="<?php echo URL::to('assets/images/arrow-1-right.png'); ?>"></a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="carousel-example" class="carousel slide hidden-xs" data-ride="carousel">
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                <?php foreach(array_chunk($sameLabelAlbums->getCollection()->all(),6) as $row ): ?>
+                    <div class="item active">
+                        <div class="row pf-c">
+                            <?php foreach($row as $album): ?>
+                                <div class="col-sm-2 pd-f">
+                                    <div class="most-list">
+                                    <a href="javascript:void(0);" class="music-feature-titles">
+                                         <div class="photo">
+                                            <img src="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" class="img-responsive" alt="a"  alt="<?php echo $album->title; ?>"/>
+                                        </div>
+                                        </a>
+                                        <div class="most-info">
+                                            <p>
+                                                <a class="album-title pjax" title="<?php echo $album->title; ?>" href="<?php echo URL::to('album/'.Custom::slugify($album->title).'-'.$album->slug); ?>"><?php echo $album->title; ?></a>
+                                                    <a class="album-artist pjax" title="<?php echo Lang::get('words.browse-albums-of'); ?> <?php echo $album->artist->name; ?>" href="<?php echo URL::to('artist/'.$album->artist->slug); ?>"><?php echo $album->artist->name; ?></a>
+                                            </p>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        </div>
+
+</div>
+    <?php else: ?>
+    <div class="container">
+            <div class="more-label">
+                <div class="row pf-c">
+                <div class="row pf-c">
+                    <div class="col-md-9">
+                        <div class="h-b-most">
+                        <h3> No More From This Label </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+      </div>
+
+
+    <?php endif; ?>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

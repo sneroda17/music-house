@@ -1,0 +1,32 @@
+<?php $__env->startSection('meta-content'); ?>
+<title><?php echo Lang::get('words.admin_alt').' - '.Lang::get('words.pages'); ?></title>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href="<?php echo URL::to('admin'); ?>"><?php echo Lang::get('words.admin'); ?></a></li>
+            <li class="active"><?php echo Lang::get('words.pages'); ?></li>
+        </ol>
+    </div>
+</div>
+<form method="POST" action="<?php echo URL::to('admin/pages'); ?>" accept-charset="UTF-8">
+    <div class="row">
+        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+		<?php foreach($pages as $page): ?>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="<?php echo $page->title; ?>" class="control-label padding0"><?php echo $page->title; ?>:</label>
+                    <textarea rows="6" class="form-control" name="<?php echo $page->title; ?>"><?php echo $page->description; ?></textarea>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <button type="submit" class="btn btn-primary btn-block"><?php echo Lang::get('words.save'); ?> <?php echo Lang::get('words.pages'); ?></button>
+        </div>
+    </div>
+</form>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

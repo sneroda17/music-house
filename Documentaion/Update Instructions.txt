@@ -1,0 +1,13 @@
+Upgrade Instructions
+
+1. Backup 'app' and 'public/assets' folders.
+
+2. Upload and replace 'app' folder (EXCEPT 'config' FOLDER) Very Important!.
+
+3. Upload and replace all the files inside the 'public/assets' folder.
+
+4. Visit http://yoursite.com/update.
+
+5. Congratulations, your site is now updated.
+
+6. Don't foget to rate and review my Script.

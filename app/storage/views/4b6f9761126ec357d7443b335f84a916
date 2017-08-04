@@ -1,0 +1,200 @@
+<?php $__env->startSection('meta-content'); ?>
+<title><?php echo Lang::get('words.admin_alt').' - '.Lang::get('words.albums'); ?></title>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
+<?php
+	$aa_counts = DB::table('tracks')->whereIn('album_id', $albums->lists('id'))->select(DB::raw('album_id, count(id) AS count'))->groupBy('album_id')->get();
+	$aa_array = array();
+	foreach($aa_counts as $aa_count) {
+		$aa_array[$aa_count->album_id] = $aa_count->count;
+	}
+?>
+	<div class="row">
+		<div class="col-xs-12">
+			<ol class="breadcrumb">
+				<li><a href="<?php echo URL::to('admin'); ?>"><?php echo Lang::get('words.admin'); ?></a></li>
+				<li class="active"><?php echo Lang::get('words.albums'); ?> (<b><?php echo DB::table("albums")->count(); ?></b>)</li>
+			</ol>
+		</div>
+	</div>
+	<div class="row">
+		<form method="get">
+			<div class="col-xs-12">
+				<div class="form-group input-group">
+					<input type="text" class="form-control" name="q" value="<?php if(Input::get('q')): ?><?php echo Input::get('q'); ?><?php endif; ?>" placeholder="<?php echo Lang::get('words.search'); ?>" aria-describedby="basic-addon2">
+					<div class="input-group-btn">
+						<button type="submit" class="btn btn-primary"><span class="fa fa-search"></span> <?php echo Lang::get('words.search'); ?></button>
+						<a data-target="#add-album-modal" data-toggle="modal" class="btn btn-danger"><span class="fa fa-plus"></span> <?php echo Lang::get('words.add-new'); ?></a>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</form>
+	</div>
+	<div class="row">
+		<?php $__empty_1 = true; foreach($albums as $album): $__empty_1 = false; ?>
+			<?php $tracks_count = isset($aa_array[$album->id]) ? $aa_array[$album->id] : 0; ?>
+			<div class="col-lg-3 col-md-4 col-sm-6" style="margin-bottom:15px">
+				<div class="panel panel-default">
+					<div class="panel-heading text-nowrap" style="padding:10px;">
+						<h5 style="margin:0"><?php echo $album->title; ?> (<?php echo $tracks_count; ?>)</h5>
+					</div>
+					<div class="panel-body" style="padding:10px;">
+					<div class="row">
+						<div class="col-xs-6">
+							<p>
+							<a href="<?php echo URL::to('admin/album/'.$album->slug); ?>">
+			    				<img class="img-responsive" src="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>">
+			    			</a>
+			    			</p>
+						</div>
+						<div class="col-xs-6">
+							<div class="row text-muted">
+							<p><?php echo Lang::get('words.artist'); ?>: <a title="<?php echo $album->artist->name; ?> <?php echo Lang::get('words.albums'); ?>" class="pjax" href="<?php echo URL::to('admin/artist/'.$album->artist->slug); ?>"><?php echo $album->artist->name; ?></a></p>
+							<p><?php echo Lang::get('words.category'); ?>:
+							<?php $__empty_2 = true; foreach($album->categories as $cat): $__empty_2 = false; ?> <a title="<?php echo $cat->name; ?> <?php echo Lang::get('words.albums'); ?>" class="pjax" href="<?php echo URL::to('admin/category/'.$cat->slug); ?>"><?php echo $cat->name; ?></a><br>
+							<?php endforeach; if ($__empty_2): ?>
+                            <?php endif; ?> </p>
+							<p><?php echo Lang::get('words.language'); ?>: <a title="<?php echo $album->language->name; ?> <?php echo Lang::get('words.albums'); ?>" class="pjax" href="<?php echo URL::to('admin/language/'.$album->language->slug); ?>"><?php echo $album->language->name; ?></a></p>
+							<p><?php echo Lang::get('words.views'); ?>: <span class="text-danger"><?php echo $album->views; ?></span></p>
+							<p><?php echo Lang::get('words.date'); ?>: <?php echo $album->created_at->toFormattedDateString(); ?></p>
+							<p><?php echo Lang::get('words.released'); ?>: <?php echo $album->release_date; ?></p>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					</div>
+					<div class="panel-footer" style="padding:10px;">
+						<div class="btn-group">
+							<a href="<?php echo URL::to('admin/album/'.$album->slug.'/add'); ?>" class="btn btn-sm btn-primary pjax"><i class="fa fa-plus"></i> <?php echo Lang::get('words.add-track'); ?></a>
+							<?php /*<a data-title="<?php echo $album->title; ?>" data-category="<?php echo $album->category->name; ?>" data-artist="<?php echo $album->artist->name; ?>" data-language="<?php echo $album->language->name; ?>" data-release="<?php echo $album->release_date; ?>" data-slug="<?php echo $album->slug; ?>" data-toggle="modal" data-target="#edit-album-modal" class="btn btn-sm btn-info"><i class="fa fa-pencil"></i> <?php echo Lang::get('words.edit'); ?></a>*/ ?>
+							<a href="<?php echo URL::to('admin/album/'.$album->slug.'/delete'); ?>" class="btn btn-sm btn-danger pjax"><i class="fa fa-trash"></i> <?php echo Lang::get('words.delete'); ?></a>
+							<a href="<?php echo URL::to('admin/album/'.$album->slug.'/featured'); ?>" class="btn btn-sm btn-primary "><?php if(!$album->featured): ?> <i class="fa fa-times"></i> <?php else: ?>  <i class="fa fa-check"></i> <?php endif; ?> Featured</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		<?php endforeach; if ($__empty_1): ?>
+		<div class="col-xs-12">
+			<div class="alert alert-danger">No Album to Show</div>
+		</div>
+		<?php endif; ?>
+   </div>
+   <div class="row">
+	    <div class="col-xs-12 text-center">
+	        <?php echo $albums->links(); ?>
+
+	    </div>
+	</div>
+<div class="modal fade" id="edit-album-modal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><?php echo Lang::get('words.edit'); ?> <?php echo Lang::get('words.album'); ?></h4>
+      		</div>
+      		<form id="edit-album-form" role="form" method="post" action="<?php echo URL::to('admin/album/edit'); ?>" enctype="multipart/form-data">
+	      		<div class="modal-body">
+			    	<input type="hidden" name="slug" value="">
+			    	<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+		            <div class="form-group">
+						<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.name'); ?>:</label>
+						<input type="text" class="form-control" name="title" placeholder="<?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.name'); ?>">
+					</div>
+					<div class="form-group">
+						<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.artist'); ?>:</label>
+						<input type="text" class="typeahead" name="artist" placeholder="<?php echo Lang::get('words.artist'); ?>">
+					</div>
+					<div class="form-group">
+						<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.category'); ?>:</label>
+						<input type="text" class="typeahead2" name="category" placeholder="<?php echo Lang::get('words.category'); ?>">
+					</div>
+					<div class="form-group">
+						<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.language'); ?>:</label>
+						<input type="text" class="typeahead3" name="language" placeholder="<?php echo Lang::get('words.language'); ?>">
+					</div>
+					<div class="form-group">
+						<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.cover'); ?></label>
+						<div class="al-art-opt">
+							<span class="btn btn-file btn-primary">
+								<input type="file" name="image">
+								<?php echo Lang::get('words.browse-image'); ?>
+
+							</span>
+							OR
+							<input class="btn btn-info" id="getImgUrl" value="Get via Web" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label><?php echo Lang::get('words.released'); ?>:</label>
+						<input type="text" class="form-control datepicker" data-date-format="yyyy-mm-dd" name="release" placeholder="DD/MM/YYYY">
+					</div>
+	      		</div>
+	      		<div class="modal-footer">
+	        		<input type="submit" class="btn btn-danger btn-block" value="<?php echo Lang::get('words.save'); ?> <?php echo Lang::get('words.album'); ?>">
+	      		</div>
+	      	</form>
+    	</div>
+	</div>
+</div>
+<div class="modal fade" id="add-album-modal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+    	    <form id="create-album" role="form" method="post" action="<?php echo URL::to('admin/album/create'); ?>" enctype="multipart/form-data">
+      		<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><?php echo Lang::get('words.add-new'); ?></h4>
+      		</div>
+      		<div class="modal-body">
+		    	<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+		    	<input type="hidden" name="imgurl" value="">
+	            <div class="form-group">
+					<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.name'); ?>:</label>
+					<input type="text" class="form-control" name="title" placeholder="<?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.name'); ?>">
+				</div>
+				<div class="form-group">
+					<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.artist'); ?>:</label>
+					<input type="text" class="typeahead form-control" data-role="tagsinput" name="artist" placeholder="<?php echo Lang::get('words.artist'); ?>">
+				</div>
+				<div class="form-group">
+					<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.category'); ?>:</label>
+					<input type="text" class="typeahead2 form-control" data-role="tagsinput" name="category" placeholder="<?php echo Lang::get('words.category'); ?>">
+				</div>
+				<div class="form-group">
+					<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.language'); ?>:</label>
+					<input type="text" class="typeahead3 form-control" data-role="tagsinput" name="language" placeholder="<?php echo Lang::get('words.language'); ?>">
+				</div>
+				<div class="form-group">
+					<label><?php echo Lang::get('words.album'); ?> <?php echo Lang::get('words.cover'); ?>:</label>
+					<div class="al-art-opt">
+						<span class="btn btn-file btn-primary">
+							<input type="file" name="image">
+							<?php echo Lang::get('words.browse-image'); ?>
+
+						</span>
+						OR
+						<input class="btn btn-info" id="getImgUrl" value="Get via Web" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label><?php echo Lang::get('words.released'); ?>:</label>
+					<input type="text" class="form-control datepicker" data-date-format="yyyy-mm-dd" name="release" placeholder="DD/MM/YYYY">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-block btn-danger"><?php echo Lang::get('words.create'); ?></button>
+			</div>
+			</form>
+    	</div>
+	</div>
+</div>
+<script type="text/javascript">
+		$('.datepicker').datepicker({
+			todayHighlight: true,
+			autoclose: true
+		});
+	</script>
+<?php $__env->stopSection(); ?>
+
+
+<?php echo $__env->make('admin.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

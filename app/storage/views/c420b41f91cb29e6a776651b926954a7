@@ -1,0 +1,77 @@
+<?php $__env->startSection('meta-content'); ?>
+	<meta name="twitter:card" value="photo"/>
+	<meta name="twitter:site" value="<?php echo '@'.$settings->twitter_page_id; ?>"/>
+	<meta name="twitter:image" value="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+	<meta property="og:type" content="blog"/>
+	<meta property="og:site_name" content="<?php echo $settings->website_name; ?>"/>
+	<meta property="og:url" content="<?php echo Request::url(); ?>"/>
+	<meta property="og:title" content="<?php echo $settings->website_name; ?> - <?php echo $searchKey; ?> <?php echo Lang::get('words.albums'); ?>"/>
+	<meta property="og:image" content="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+	<meta property="og:description" content="<?php echo $settings->website_name; ?> - <?php echo $searchKey; ?> <?php echo Lang::get('words.albums'); ?>"/>
+	<title><?php echo $settings->website_name; ?> - <?php echo $searchKey; ?> <?php echo Lang::get('words.albums'); ?></title>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<div class="container">
+                <div class="col-md-9 col-sm-9 col-xs-12">
+                <!-- filter-product-->
+                <div class="latest pr ">
+                <div class="latest-heading">
+                       <h2> <span class="text-muted"><?php echo Lang::get('words.search'); ?></span> <a class="fav-link pjax" href="<?php echo URL::to('/?q='.$searchKey); ?>" title="<?php echo Lang::get('words.tracks'); ?>"><?php echo Lang::get('words.tracks'); ?></a> <a class="fav-link active pjax" href="<?php echo URL::to('album?q='.$searchKey); ?>" title="<?php echo Lang::get('words.albums'); ?>"><?php echo Lang::get('words.albums'); ?></a><?php /* <a class="fav-link pjax" href="<?php echo URL::to('artist?q='.$searchKey); ?>" title="<?php echo Lang::get('words.artists'); ?>"><?php echo Lang::get('words.artists'); ?></a>*/ ?></h2>
+                </div>
+
+                    <?php foreach(array_chunk($albums->getCollection()->all(),6) as $row ): ?>
+                                <div class="row td-r  ">
+                                    <?php foreach($row as $index => $album): ?>
+                                    <?php $tracks_count = isset($aa_array[$album->id]) ? $aa_array[$album->id] : 0; ?>
+                                                        <div class="col-md-2 col-sm-2 col-xs-2 pd-f">
+                                                                <div class="lats-item ">
+                                                                <div class="play-album" data-album="<?php echo $album->slug; ?>" data-album_title="<?php echo $album->title; ?>" data-cover="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>">
+                                                                		                		<span class="fa fa-play"></span>
+                                                                		                	</div>
+                                                                <a href="javascript:void(0);" class="music-feature-titles">
+                                                                     <div class="lats-photo">
+                                                                        <img src="<?php echo URL::to('uploads/albums/'.$album->location.'/thumb/'.$album->slug.'.jpg'); ?>" alt="<?php echo $album->title; ?>"/>
+                                                                    </div>
+                                                                </a>
+                                                                <div class="lats-info">
+                                                                        <span class="atist-n-d">
+                                                                            <a class="album-title pjax" title="<?php echo $album->title; ?>" href="<?php echo URL::to('album/'.Custom::slugify($album->title).'-'.$album->slug); ?>"><?php echo $album->title; ?></a>
+                                                                            <span class="album-artist" title="<?php echo Lang::get('words.browse-albums-of'); ?> <?php echo $album->artist->name; ?>" style="cursor: default;"><?php echo $album->artist->name; ?></span>
+                                                                       </span>
+
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+
+                                    <?php endforeach; ?>
+                                </div>
+                    <?php endforeach; ?>
+
+
+
+                </div>
+
+                <!-- latest prroduct-->
+
+                <div class="pagination-point">
+                    <div class="pagination">
+                        <?php echo $albums->links(); ?>
+
+                    </div>
+
+                </div>
+                <!-- pagination-point-->
+
+                </div>
+
+ <?php echo View::make('partials.top10') ; ?>
+
+
+
+            </div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

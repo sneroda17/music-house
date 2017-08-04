@@ -1,0 +1,27 @@
+<?php $__env->startSection('meta-content'); ?>
+	<meta name="twitter:card" value="photo"/>
+	<meta name="twitter:site" value="<?php echo '@'.$settings->twitter_page_id; ?>"/>
+	<meta name="twitter:image" value="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+	<meta property="og:type" content="blog"/>
+	<meta property="og:site_name" content="<?php echo $settings->website_name; ?>"/>
+	<meta property="og:url" content="<?php echo URL::to('/'); ?>"/>
+	<meta property="og:title" content="Error: 404, Page Not Found"/>
+	<meta property="og:image" content="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+	<meta property="og:description" content="Error: 404, Page Not Found"/>
+	<meta content="Error: 404, Page Not Found" name="description"/>
+	<meta content="Error: 404, Page Not Found" name="title"/>
+	<title>Error: 404, Page Not Found</title>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<div class="hidden-xs text-center" style="width:728px;margin:15px auto 0">
+				<iframe src="<?php echo URL::to('ads/banner'); ?>" width='728' height="90" frameborder='0' border='0' marginwidth='0' marginheight='0' scrolling='no'></iframe>
+			</div>
+			<h2 class="text-danger"><span class="fa fa-meh-o"></span> Error: 404, Page Not Found</h2>
+			<img width="100%" src="<?php echo URL::asset('assets/images/404.jpg'); ?>">
+		</div>
+	</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

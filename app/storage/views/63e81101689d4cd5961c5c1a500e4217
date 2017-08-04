@@ -1,0 +1,371 @@
+<?php $__env->startSection('meta-content'); ?>
+<title><?php echo Lang::get('words.admin_alt').' - '.Lang::get('words.users'); ?></title>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+<?php
+    $pl_counts = DB::table('playlists')->whereIn('user_id', $users->lists('id'))->select(DB::raw('user_id, count(id) as count'))->groupBy('user_id')->get();
+    $pl_array = array();
+    foreach($pl_counts as $pl_count) {
+        $pl_array[$pl_count->user_id] = $pl_count->count;
+    }
+
+    $al_counts = DB::table('album_likes')->whereIn('user_id', $users->lists('id'))->select(DB::raw('user_id, count(id) as count'))->groupBy('user_id')->get();
+    $al_array = array();
+    foreach($al_counts as $al_count) {
+        $al_array[$al_count->user_id] = $al_count->count;
+    }
+
+    $tl_counts = DB::table('track_likes')->whereIn('user_id', $users->lists('id'))->select(DB::raw('user_id, count(id) as count'))->groupBy('user_id')->get();
+    $tl_array = array();
+    foreach($tl_counts as $tl_count) {
+        $tl_array[$tl_count->user_id] = $tl_count->count;
+    }
+?>
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href="<?php echo URL::to('admin'); ?>"><i class="fa fa-dashboard"></i> <?php echo Lang::get('words.admin'); ?></a></li>
+            <li class="active"><?php echo Lang::get('words.users'); ?> (<b><?php echo DB::table("users")->count(); ?></b>)</li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <form method="get">
+        <div class="col-xs-12">
+            <div class="form-group input-group">
+                <input type="text" class="form-control" name="q" value="<?php if(Input::get('q')): ?><?php echo Input::get('q'); ?><?php endif; ?>" placeholder="<?php echo Lang::get('words.search'); ?>" aria-describedby="basic-addon2">
+                <div class="input-group-btn">
+                    <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span> <?php echo Lang::get('words.search'); ?></button>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+
+    <div class="col-md-2 col-sm-2 col-xs-12">
+        <div class="accout-info">
+            <!--login satrt-->
+
+            <!-- Large modal -->
+            <button class="btn btn-primary"  data-toggle="modal" data-target="#adminsignup" href="#adminsignup"> <?php echo Lang::get('words.add-new-user'); ?></button>
+            <!--login end-->
+
+        </div>   <!--accout-info-->
+    </div>
+
+
+</div><br>
+
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table">
+
+            
+                <tr>
+                    <th><?php echo Lang::get('words.username'); ?></th>
+                    <th><?php echo Lang::get('words.email'); ?></th>
+                    <th><?php echo Lang::get('words.playlists'); ?></th>
+                    <th><?php echo Lang::get('words.liked-albums-tracks'); ?></th>
+                    <th><?php echo Lang::get('words.created'); ?></th>
+                    <th><?php echo Lang::get('words.active'); ?></th>
+                    <th><?php echo Lang::get('words.actions'); ?></th>
+                    <th><?php echo Lang::get('words.subscriber'); ?></th>
+
+
+                </tr>
+            
+                <?php foreach($users as $user): ?>
+                    <?php
+                        $playlists_count = isset($pl_array[$user->id]) ? $pl_array[$user->id] : 0;
+                        $albums_count = isset($al_array[$user->id]) ? $al_array[$user->id] : 0;
+                        $tracks_count = isset($tl_array[$user->id]) ? $tl_array[$user->id] : 0;
+                    ?>
+                    <tr>
+                        <td><?php echo $user->username; ?></td>
+                        <td><?php echo $user->email; ?></td>
+                        <td><?php echo $playlists_count; ?></td>
+                        <td><label class="label label-primary"><?php echo Lang::get('words.albums'); ?>: <?php echo $albums_count; ?></label> <label class="label label-primary"><?php echo Lang::get('words.tracks'); ?>: <?php echo $tracks_count; ?></label></td>
+                        <td><?php echo $user->created_at->toFormattedDateString(); ?></td>
+                        <td>
+                            <?php if($user->active): ?>
+                                <label class="label label-success"><?php echo Lang::get('words.yes'); ?></label>
+                            <?php else: ?>
+                                <label class="label label-warning"><?php echo Lang::get('words.no'); ?></label>
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?php if($user->admin): ?>
+                                <a data-target="#user-mode-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" title="<?php echo Lang::get('words.make'); ?> <?php echo Lang::get('words.user'); ?>" class="btn btn-xs btn-success"><span class="fa fa-user-secret"></span> <?php echo Lang::get('words.admin'); ?></a>
+                            <?php else: ?>
+                                <a data-target="#user-mode-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" title="<?php echo Lang::get('words.make'); ?> <?php echo Lang::get('words.admin'); ?>" class="btn btn-xs btn-warning"><span class="fa fa-user"></span> <?php echo Lang::get('words.user'); ?></a>
+                            <?php endif; ?>
+
+                            <a data-target="#edit-user-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" data-username="<?php echo $user->username; ?>" data-email="<?php echo $user->email; ?>" title="<?php echo Lang::get('words.edit-user'); ?>" class="btn btn-xs btn-danger"><span class="fa fa-edit"></span> <?php echo Lang::get('words.edit'); ?></a>
+
+                            <?php if($user->banned): ?>
+                                <a data-target="#user-status-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" title="Unban User" class="btn btn-xs btn-danger"><span class="fa fa-ban"></span> <?php echo Lang::get('words.unban'); ?></a>
+                            <?php else: ?>
+                                <a data-target="#user-status-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" title="Ban User" class="btn btn-xs btn-success"><span class="fa fa-check"></span> <?php echo Lang::get('words.ban'); ?></a>
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?php if(isset($user->subscriber->is_subscribed)): ?>
+                            <?php
+                                   $time_limit = $user->subscriber->time_limit;
+
+                                   $day     = date("j",strtotime($time_limit));
+                                   $month   = date("m",strtotime($time_limit));
+                                   $year    = date("Y",strtotime($time_limit));
+                            ?>
+                                <a data-target="#subscribe-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" data-subscription="<?php echo $user->subscriber->is_subscribed; ?>" data-expire_date="<?php echo $day; ?>" data-expire_month="<?php echo $month; ?>" data-expire_year="<?php echo $year; ?>" data-download_limit="<?php echo $user->subscriber->download_limit; ?>" title="<?php echo Lang::get('words.user'); ?> <?php echo Lang::get('words.subscribed'); ?>" class="btn btn-xs btn-success"><?php echo Lang::get('words.yes'); ?></a>
+                            <?php else: ?>
+
+                                <a data-target="#subscribe-modal" data-toggle="modal" data-user="<?php echo $user->id; ?>" title="<?php echo Lang::get('words.no'); ?> <?php echo Lang::get('words.subscribed'); ?>"  class="btn btn-xs btn-warning"><?php echo Lang::get('words.no'); ?></a>
+
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php //dd($user->subscriber->time_limit);
+                     //dd($users->subscriber); ?>
+                <?php endforeach; ?>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 text-center">
+        <?php echo $users->links(); ?>
+
+    </div>
+</div>
+
+<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php echo Lang::get('words.edit-user'); ?></h4>
+            </div>
+            <form id="edit-user-form" role="form" method="post" action="<?php echo URL::to('admin/user/edit'); ?>">
+                <div class="modal-body">
+                    <input type="hidden" name="user" value="">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <div class="form-group">
+
+                        <label><?php echo Lang::get('words.username'); ?>:</label>
+                        <input type="text" class="form-control" name="username" placeholder="<?php echo Lang::get('words.username'); ?>" disabled>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label><?php echo Lang::get('words.email'); ?>:</label>
+                        <input type="text" class="form-control" name="email" placeholder="<?php echo Lang::get('words.email'); ?>" disabled>
+
+                    </div>
+                    <div class="form-group">
+                        <label><?php echo Lang::get('words.new-password'); ?>:</label>
+                        <input type="password" name="password" autocomplete="off" class="form-control" placeholder="<?php echo Lang::get('words.new-password'); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label><?php echo Lang::get('words.confirm-password'); ?>:</label>
+                        <input type="password" name="password_confirmation" autocomplete="off" class="form-control" placeholder="<?php echo Lang::get('words.confirm-password'); ?>" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger btn-block" value="<?php echo Lang::get('words.save-user'); ?>">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="user-mode-modal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php echo Lang::get('words.change-user-mode'); ?></h4>
+            </div>
+            <form id="user-mode-form" role="form" method="post" action="<?php echo URL::to('admin/user/mode'); ?>">
+                <div class="modal-body">
+                    <input type="hidden" name="user" value="">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <h5><?php echo Lang::get('words.change-user-mode-msg'); ?></h5>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger btn-block" value="<?php echo Lang::get('words.change-mode'); ?>">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="user-status-modal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php echo Lang::get('words.change-user-status'); ?></h4>
+            </div>
+            <form id="user-status-form" role="form" method="post" action="<?php echo URL::to('admin/user/status'); ?>">
+                <div class="modal-body">
+                    <input type="hidden" name="user" value="">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <h5><?php echo Lang::get('words.change-user-status-msg'); ?></h5>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger btn-block" value="<?php echo Lang::get('words.change-status'); ?>">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="subscribe-modal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php echo Lang::get('words.user-subs'); ?></h4>
+            </div>
+
+            <form id="subscribe-form" role="form" method="POST" action="<?php echo URL::to('admin/user/subscriber'); ?>">
+                <div class="modal-body">
+                    <input type="hidden" name="user" value="">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <small class="check"><?php echo Lang::get('words.premium-membership'); ?></small>
+                    <?php if(Auth::user()->admin): ?>
+                        <input type="checkbox" class="check" name="subscription" value="1" >
+                    <?php else: ?>
+                        <input type="checkbox" class="check" name="subscription" value=1>
+                    <?php endif; ?>
+                    <h4><small><?php echo Lang::get('words.subs-expiry-date'); ?></small></h4>
+                    <?php if(Auth::user()->admin): ?>
+                    <div class="subs-date">
+
+                        <select id="expire_date" name="expire_date" class="custom-select" >
+                        <option value=""> Date </option>
+                            <?php for($i = 1; $i <= 31; $i++): ?>
+                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                            <?php endfor; ?>
+
+                        </select>
+                       <select id="expire_month" name="expire_month" >
+                              <option value=''> Month </option>
+                              <option value="01">Janaury</option>
+                              <option value="02">February</option>
+                              <option value="03">March</option>
+                              <option value="04">April</option>
+                              <option value="05">May</option>
+                              <option value="06">June</option>
+                              <option value="07">July</option>
+                              <option value="08">August</option>
+                              <option value="09">September</option>
+                              <option value="10">October</option>
+                              <option value="11">November</option>
+                              <option value="12">December</option>
+                        </select>
+                        <select id="expire_year" name="expire_year" >
+                              <option value=""> Year </option>
+                              <option value="2017">2017</option>
+                              <option value="2018">2018</option>
+                              <option value="2019">2019</option>
+                              <option value="2020">2020</option>
+
+                        </select>
+                        </div>
+                    <?php else: ?>
+                        <div class="subs-date">
+
+                            <select id='expire_date' name="expire_date"  >
+                            <option value=''> Date </option>
+                                <?php for($i = 1; $i <= 31; $i++): ?>
+                                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                           <select id='expire_month' name="expire_month" disabled>
+                                  <option value=''> Month </option>
+                                  <option value='01'>Janaury</option>
+                                  <option value='02'>February</option>
+                                  <option value='03'>March</option>
+                                  <option value='04'>April</option>
+                                  <option value='05'>May</option>
+                                  <option value='06'>June</option>
+                                  <option value='07'>July</option>
+                                  <option value='08'>August</option>
+                                  <option value='09'>September</option>
+                                  <option value='10'>October</option>
+                                  <option value='11'>November</option>
+                                  <option value='12'>December</option>
+                            </select>
+                            <select id='expire_year' name="expire_year" >
+                                  <option value=''> Year </option>
+                                  <option value='2017'>2017</option>
+                                  <option value='2018'>2018</option>
+                                  <option value='2019'>2019</option>
+                                  <option value='2020'>2020</option>
+
+                            </select>
+                            </div>
+                    <?php endif; ?>
+                    <h4><small><?php echo Lang::get('words.download-limit-left'); ?></small></h4>
+                    <?php if(Auth::user()->admin): ?>
+                       <div class="down">
+                       <Span>
+                        <input type="text" class="form-control form-addon" name="download_limit" >
+                        </Span>
+                       <Span class="quota"> MB</Span>
+                        </div>
+                    <?php else: ?>
+                    <div class="down">
+                       <Span>
+                        <input type="text" class="form-control form-addon" name="download_limit" >
+                        </Span>
+                       <Span class="quota"> MB</Span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" id="btn-subscribe" class="btn btn-danger btn-block" value="<?php echo Lang::get('words.submit'); ?>">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+
+
+
+<?php echo $__env->make('modals.modal-form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<script type="text/javascript">
+    <?php if(Session::get('message') != '' && Session::get('status') != ''): ?>
+        var n = noty({
+                text        : '<?php echo Session::get("message"); ?>',
+                type        : '<?php echo Session::get("status"); ?>',
+                dismissQueue: true,
+                layout      : 'bottomRight',
+                closeWith   : ['click'],
+                theme       : 'relax',
+                maxVisible  : 10
+            });
+        <?php Session::forget('status'); Session::forget('message'); ?>
+    <?php endif; ?>
+
+</script>
+<?php if(isset($settings->analytics)): ?>
+    <?php echo htmlspecialchars_decode($settings->analytics); ?>
+
+<?php endif; ?>
+<?php /*
+</body>
+</html>*/ ?>
+
+<?php echo $__env->make('admin.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

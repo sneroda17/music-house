@@ -1,0 +1,9 @@
+[12-May-2017 08:12:38 UTC] PHP Parse error:  syntax error, unexpected ''username'' (T_CONSTANT_ENCAPSED_STRING), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 59
+[12-May-2017 08:12:38 UTC] PHP Parse error:  syntax error, unexpected ''username'' (T_CONSTANT_ENCAPSED_STRING), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 59
+[12-May-2017 08:12:48 UTC] PHP Parse error:  syntax error, unexpected ''username'' (T_CONSTANT_ENCAPSED_STRING), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 59
+[12-May-2017 08:16:41 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 59
+[12-May-2017 08:18:01 UTC] PHP Parse error:  syntax error, unexpected ''username'' (T_CONSTANT_ENCAPSED_STRING), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 59
+[12-May-2017 08:19:27 UTC] PHP Parse error:  syntax error, unexpected '.1' (T_DNUMBER), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 57
+[12-May-2017 08:24:44 UTC] PHP Parse error:  syntax error, unexpected '.59' (T_DNUMBER), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 57
+[12-May-2017 08:27:14 UTC] PHP Parse error:  syntax error, unexpected '.59' (T_DNUMBER), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 57
+[12-May-2017 08:27:16 UTC] PHP Parse error:  syntax error, unexpected '.59' (T_DNUMBER), expecting ')' in /homessd/blueligh/music.bluelighthosting.com/app/config/database.php on line 57

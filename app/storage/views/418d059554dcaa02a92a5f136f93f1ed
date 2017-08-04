@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+        <?php echo $settings->website_name; ?> - <?php echo $settings->website_title; ?>
+
+    </title>
+    <meta charset="UTF-8">
+    <meta name="description" content="<?php echo $settings->website_description; ?>">
+    <meta name="keywords" content="<?php echo $settings->website_keywords; ?>">
+    <meta name="author" content="<?php echo $settings->website_name; ?>">
+
+    <meta name="twitter:card" content="photo" />
+    <meta name="twitter:site" content="<?php echo $settings->twitter_page_id; ?>" />
+    <meta name="twitter:image" content="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+
+    <meta property="og:site_name" content="<?php echo $settings->website_name; ?>" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="<?php echo $settings->website_name; ?> - <?php echo $settings->website_title; ?>"/>
+    <meta property="og:image" content="<?php echo URL::asset('assets/images/logo.png'); ?>"/>
+    <meta property="og:description" content="<?php echo $settings->website_description; ?>"/>
+
+    <meta itemprop="name" content="<?php echo $settings->website_name; ?> - <?php echo $settings->website_title; ?>">
+    <meta itemprop="description" content="<?php echo $settings->website_description; ?>">
+    <meta itemprop="image" content="<?php echo URL::asset('assets/images/logo.png'); ?>">
+</head>
+<body>
+<?php if($type == 'banner'): ?>
+    <?php echo htmlspecialchars_decode($settings->banner_ad); ?>
+
+<?php else: ?>
+    <?php echo htmlspecialchars_decode($settings->box_ad); ?>
+
+<?php endif; ?>
+</body>
+</html>
